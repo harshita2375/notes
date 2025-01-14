@@ -1,0 +1,37 @@
+
+Strings
+The simplest data type in Redis is a string. Strings are also the typical (and
+frequently the sole) data type in other key-value storage engines. You can
+store strings of any kind, including binary data. You might, for example,
+want to cache image data for avatars in a social network. The only thing
+you need to keep in mind is that a specific value inside Redis shouldn’t go
+beyond 512MB of data.
+
+List
+Lists in Redis are ordered lists of binary safe strings, implemented on the
+idea of a linked list. This means that while getting an element by a specific
+index is a slow operation, adding to the head or tail of the data structure is
+extremely fast, as it should be in a database. You might want to use lists in
+order to implement structures such as queues, a recipe for which we’ll look
+into later in the book.
+
+Hashes
+Much like traditional hashtables, hashes in Redis store several fields and
+their values inside a specific key. Hashes are a perfect option to map
+complex objects inside Redis, by using fields for object attributes (example
+fields for a car object might be “color”, “brand”, “license plate”).
+
+Set and sorted set
+Sets in Redis are an unordered collection of binary-safe strings. Elements in
+a given set can have no duplicates. For instance, if you try to add an
+element wheel to a set twice, Redis will ignore the second operation. Sets
+allow you to perform typical set operations such as intersections and
+unions.
+While these might look similar to lists, their implementation is quite
+different and they are suited to different needs due to the different
+operations they make available. Memory usage should be higher than when
+using lists.
+Sorted sets are a particular case of the set implementation that are defined
+by a score in addition to the typical binary-safe string. This score allows
+you to retrieve an ordered list of elements by using the ZRANGE command.
+We’ll look at some e

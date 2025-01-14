@@ -1,0 +1,31 @@
+application container image
+container image is a binary package that encapsulates all of
+the files necessary to run an application inside of an OS container.
+Container images bundle an application and its dependencies, under a root
+filesystem, into a single artifact.
+ The most popular container image format is the
+Docker image format, the primary image format supported by Kubernetes.
+
+
+
+DockerFile
+A Dockerfile can be used to automate the creation of a Docker container
+image.
+
+image security [do and don'ts]
+- don’t build
+  containers with passwords baked in — and this includes not just in the final
+  layer, but any layers in the image.
+
+ Storing Images in remote registry
+ standard within the Docker community is to store Docker images in a
+ remote registry.
+
+ Docker Container Runtime
+ -------------------------
+ K8s provides API for application deployment,
+ contianer runtime to set up application container using comtainer specific API.
+
+ default contianer runtime used by kubernetes is docker.
+
+

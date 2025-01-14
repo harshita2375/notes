@@ -1,0 +1,28 @@
+Redis Sentinel and Redis Cluster are both Redis tools with different features and use cases:
+Redis Sentinel
+A distributed system that monitors and manages multiple Redis instances, with a focus on high availability and automatic failover. Redis Sentinel is a good choice for applications that can work with a single node's data limit but need high availability.
+Redis Cluster
+A distributed implementation of Redis that automatically partitions data across multiple nodes. Redis Cluster is a good choice for applications that need to manage large datasets and high throughputs across multiple nodes.
+Here are some more details about Redis Sentinel and Redis Cluster:
+Automatic failover: Redis Sentinel monitors the health of Redis instances and performs a new leader election if a master fails.
+Data distribution: Redis Cluster automatically partitions data across multiple nodes, which improves performance and fault tolerance.
+Horizontal scaling: Redis Cluster enables horizontal scaling of data storage.
+Configuration file: Redis Sentinel requires a configuration file to save the current state and reload it if the system restarts.
+TCP port: Redis Sentinel listens for connections on TCP port 26379.
+Number of Sentinel instances: For production use, it's recommended to have at least three Sentinel instances for accurate observation during automatic failover
+
+-----------------------------------------------------------------------------------------
+
+redis cache instance ->  RAM
+ redis instance
+
+
+ populate redis cache -> cache worker ->
+
+ Cache works -> scheduler that queries the table , between last polled time and curernt time
+
+ ------------------------------------------
+
+ Spring data redis
+ - prvode configuration where actual redis is running
+ - it provides redisTemplate

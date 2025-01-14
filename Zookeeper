@@ -1,0 +1,12 @@
+Uses
+1. Cluster members nodes bootstappinf configuration from centralized source
+2. cluster mangemnet
+ 1.a) Node leave/join
+ 1.b) Nodes attaus in real time
+
+3. domain name service
+4. Distributes synchronization- lock, barrier and queues
+5. Leader election in distributed system
+6. centalized and reliable data registry.
+-------------------------------------------------------------------------------
+

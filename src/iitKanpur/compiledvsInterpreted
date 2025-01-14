@@ -1,0 +1,23 @@
+ Complied
+ Once the translation is done, the machine-language program can be run any number of times, but of course it can only
+be run on one type of computer (since each type of computer has its own individual machine
+language). If the program is to run on another type of computer it has to be re-translated,
+using a different compiler, into the appropriate machine language.
+Interpreted
+There is an alternative to compiling a high-level language program. Instead of using a
+compiler, which translates the program all at once, you can use an interpreter, which translates
+it instruction-by-instruction, as necessary. An interpreter is a program that acts much like a
+CPU, with a kind of fetch-and-execute cycle. In order to execute a program, the interpreter
+runs in a loop in which it repeatedly reads one instruction from the program, decides what is
+necessary to carry out that instruction, and then performs the appropriate machine-language
+commands to do so
+example Javascript
+
+Interpreted and compiler
+The designers of Java chose to use a combination of compilation and interpretation. Programs written in Java are compiled into machine language, but it is a machine language for
+a computer that doesn’t really exist. This so-called “virtual” computer is known as the Java
+virtual machine. The machine language for the Java virtual machine is called Java bytecode. There is no reason why Java bytecode could not be used as the machine language of a
+real computer, rather than a virtual computer.
+ava bytecode program can be run on any computer that has such an interpreter.
+This is one of the essential features of Java: the same compiled program can be run on many
+different types of computers

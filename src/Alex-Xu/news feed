@@ -1,0 +1,28 @@
+Feed publishing: when a user publishes a post, corresponding data is written into
+cache/database, and the post will be populated into friends’ news feed.
+
+ API signature [POST]: /v1/content/
+
+   web browser/app ----> Load balancer(aPI gateway) --->Rate Limit
+                                                        Authentication
+ (1)  -----> Post Service ------>post cache ---> post DB
+ (2) ------> Fanout Service ----> queue--> workers---->build news feed cache
+                            (friendsList)
+  (2.1) ---fanoutService -------------------> graph DB
+  (2.2) ---- get friends dta----->user cache----> user db
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+
+Newsfeed building: the news feed is built by aggregating friends’ posts in a reverse
+chronological order.
+
+API sign- /v1/feed
+
+(1) web browser/app =====> Load balancer===> web server
+(2) --> News feed Service
+  (2.1)--> user cache --> user db
+  (2.2) post cache --> Post DB
+(3)  News Feed cache
+

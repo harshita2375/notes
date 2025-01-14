@@ -1,0 +1,117 @@
+AIm
+- prevent DOS
+-prevent cost
+limiting excess requets,
+- Reduce server load
+
+where to put rate limiter
+- client or server side or middle limiter middleware
+ rate limiting is implemented in API gateway.
+
+Algorithm
+1.token bucket
+ A token bucket is a container that has pre-defined capacity. Tokens are put in the bucket
+ at preset rates periodically. Once the bucket is full, no more tokens are added. As shown in
+ Figure 4-4, the token bucket capacity is 4. The refiller puts 2 tokens into the bucket every
+ second. Once the bucket is full, extra tokens will overflow.
+ Each request consumes one token.
+ • If there are enough tokens, we take one token out for each request, and the request
+ goes through.
+ • If there are not enough tokens, the request is dropped.
+
+ Algorithm -
+ - bucket size/refill rate
+ pros
+The algorithm is easy to implement.
+• Memory efficient.
+• Token bucket allows a burst of traffic for short periods. A request can go through as long
+as there are tokens left.
+2.leaky bucket
+ requests are processed at a fixed rate. It is usually implemented with a first-in-first-out
+  (FIFO) queue. The algorithm
+ works as follows:
+ • When a request arrives, the system checks if the queue is full. If it is not full, the request
+ is added to the queue.
+ • Otherwise, the request is dropped.
+ • Requests are pulled from the queue and processed at regular intervals.
+Algorithm -
+ - bucket size/outflow rate
+ Pros:
+ • Memory efficient given the limited queue size.
+ • Requests are processed at a fixed rate therefore it is suitable for use cases that a stable
+ outflow rate is needed.
+  cons
+ A burst of traffic fills up the queue with old requests, and if they are not processed in
+ time, recent requests will be rate limited.
+
+3.Fixed window counter
+ The algorithm divides the timeline into fix-sized time windows and assign a counter for
+ each window.
+ • Each request the counter by one.
+ - Once the counter reaches the pre-defined threshold, new requests are dropped until a new
+ time window starts.
+ each second window, if more
+ than 3 requests are received, extra requests are dropped
+
+ cons
+ problem with this algorithm is that a burst of traffic at the edges of time windows
+ could cause more requests than allowed quota to go through.
+
+4.Sliding window log
+The algorithm keeps track of request timestamps. Timestamp data is usually kept in
+cache, such as sorted sets of Redis.
+- When a new request comes in, remove all the outdated timestamps. Outdated timestamps
+are defined as those older than the start of the current time window.
+A- dd timestamp of the new request to the log.
+• If the log size is the same or lower than the allowed count, a request is accepted.
+Otherwise, it is rejected.
+pros: Rate limiting implemented by this algorithm is very accurate. In any rolling window,
+      requests will not exceed the rate limit.
+
+cons: consumes a lot of memory
+
+
+5.Sliding window counter
+ hybrid approach that combines the fixed window counter and sliding window log.
+Assume the rate limiter allows a maximum of 7 requests per minute, and there are 5 requests
+in the previous minute and 3 in the current minute. For a new request that arrives at a 30%
+position in the current minute, the number of requests in the rolling window is calculated
+using the following formula:
+• Requests in current window + requests in the previous window * overlap percentage of
+the rolling window and previous window
+Pros
+• It smooths out spikes in traffic because the rate is based on the average rate of the
+previous window.
+• Memory efficient.
+Cons
+• It only works for not-so-strict look back window. It is an approximation of the actual rate
+because it assumes requests in the previous window are evenly distributed. However, this
+problem may not be as bad as it seems. According to experiments done by Cloudflare [10],
+only 0.003% of requests are wrongly allowed or rate limited among 400 million requests.
+
+
+
+-----------------------------------------------------------------------
+High Level Architecture
+• The client sends a request to rate limiting middleware.
+• Rate limiting middleware fetches the counter from the corresponding bucket in Redis and
+checks if the limit is reached or not.
+• If the limit is reached, the request is rejected.
+• If the limit is not reached, the request is sent to API servers. Meanwhile, the system
+increments the counter and saves it back to Redis.
+
+HTTP response code 429 (too many requests)
+to the client. Depending on the use cases, we may enqueue the rate-limited requests to be
+processed later. For example, if some orders are rate limited due to system overload, we may
+keep those orders to be processed later.
+----------------------------------------------------------------------
+Rate limiter in a distributed environment
+
+Building a rate limiter that works in a single server environment is not difficult. However,
+scaling the system to support multiple servers and concurrent threads is a different story.
+There are two challenges:
+• Race condition
+• Synchronization issue
+locks can solve  but significantly slow down the system.
+Lua script [13] and sorted sets data structure in Redis [8]. For readers interested in these
+strategies, refer to the corresponding reference materials [8] [13].

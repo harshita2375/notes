@@ -1,0 +1,21 @@
+
+A TreeSet cannot hold arbitrary objects, since there must be a way to determine the sorted
+order of the objects it contains. Ordinarily, this means that the objects in a set of type
+TreeSet<T> should implement the interface Comparable<T> and that obj1.compareTo(obj2)
+should be defined in a reasonable way for any two objects obj1 and obj2 in the set. Alter-
+natively, an object of type Comparator<T> can be provided as a parameter to the constructor
+when the TreeSet is created. In that case, the compareTo() method of the Comparator will be
+used to compare objects that are added to the set.
+
+A TreeSet does not use the equals() method to test whether two objects are the same.
+Instead, it uses the compareTo() method. This can be a problem. Recall from Subsection 10.1.6
+that compareTo() can consider two objects to be the same for the purpose of the comparison
+10.2. LISTS AND SETS 501
+even though the objects are not equal. For a TreeSet, this means that only one of those objects
+can be in the set. For example, if the TreeSet contains mailing addresses and if the compareTo()
+method for addresses just compares their zip codes, then the set can contain only one address in
+each zip code. Clearly, this is not right! But that only means that you have to be aware of the
+semantics of TreeSets, and you need to make sure that compareTo() is defined in a reasonable
+way for objects that you put into a TreeSet. This will be true, by the way, for Strings, Integers,
+and many other built-in types, since the compareTo() method for these types considers two
+objects to be the same only if they are actually equal.

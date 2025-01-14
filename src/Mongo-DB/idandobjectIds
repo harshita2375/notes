@@ -1,0 +1,40 @@
+Every document stored in MongoDB must have an "_id" key. The "_id" key’s value
+can be any type, but it defaults to an ObjectId. In a single collection, every document
+must have a unique value for "_id", which ensures that every document in a collection
+can be uniquely identified. That is, if you had two collections, each one could have a
+document where the value for "_id" was 123. However, neither collection could contain
+more than one document where "_id" was 123
+
+
+
+ObjectIds
+ObjectId is the default type for "_id". It is designed to be lightweight, while still being
+easy to generate in a globally unique way across disparate machines. This is the main
+reason why MongoDB uses ObjectIds as opposed to something more traditional, like
+an autoincrementing primary key: it is difficult and time-consuming to synchronize
+autoincrementing primary keys across multiple servers. Because MongoDB was designed from the beginning to be a distributed database, dealing with many nodes is an
+important consideration. The ObjectId type, as we’ll see, is easy to generate in a sharded
+environment.
+
+
+ 0 1 2 3 |4 5 6 |7 8 |9 10 11
+Timestamp Machine PID Incremen
+
+Generation of objectIDs
+This can be handled by the
+MongoDB server but will generally be done by the driver on the client side.
+
+1.• Although ObjectIds are designed to be lightweight and easy to generate, there is
+  still some overhead involved in their generation. The decision to generate them on
+  the client side reflects an overall philosophy of MongoDB: work should be pushed
+  out of the server and to the drivers whenever possible. This philosophy reflects the
+  fact that, even with scalable databases like MongoDB, it is easier to scale out at the
+  application layer than at the database layer. Moving work to the client side reduces
+  the burden requiring the database to scale.
+2.By generating ObjectIds on the client side, drivers are capable of providing richer
+  APIs than would be otherwise possible. For example, a driver might have its
+  insert method either return the generated ObjectId or inject it directly into the
+  document that was inserted. If the driver allowed the server to generate
+  ObjectIds, then a separate query would be required to determine the value of
+  "_id" for an inserted document.
+

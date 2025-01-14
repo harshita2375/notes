@@ -1,0 +1,19 @@
+- in memory ,
+- key-value
+-string,hash,set,list,json,doc,---------------------
+
+- horizonral scaling via redis cluster
+  A Redis Cluster splits data across multiple nodes (shards) while providing automatic partitioning and replication.
+
+---------------------------------------
+Addition and removal of node in cluster
+
+Redis Cluster does not use traditional consistent hashing like systems such as Cassandra or DynamoDB. Instead, it uses a hash slot approach that provides a similar goal—distributing keys across multiple nodes to balance load and improve fault tolerance—but with some differences.
+ixed Number of Hash Slots:
+
+Redis Cluster defines a fixed 16,384 hash slots that do not change, regardless of the number of nodes in the cluster.
+Each key is assigned to one of these slots, and each node in the cluster is responsible for one or more hash slots. As nodes are added or removed, hash slots are redistributed among them.
+Direct Mapping of Slots to Nodes:
+
+Instead of using a ring-like structure (as in consistent hashing), Redis assigns hash slots directly to nodes. When a key is accessed, Redis calculates the hash slot for that key and routes the request to the node responsible for that slot.
+This approach means fewer key migrations when nodes are added or removed since only the hash slots assigned to the new or removed node are affected.

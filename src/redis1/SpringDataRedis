@@ -1,0 +1,115 @@
+Spring Data Redis is a module within the Spring Data project that provides easy integration and support for Redis as a data store within Spring applications. It simplifies using Redis by providing abstractions over common Redis operations and makes it easy to interact with Redis using familiar Spring concepts like repositories, templates, and cache management.
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+
+----------------------------
+@Configuration
+public class RedisConfig {
+
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        // Customize the template settings here
+        return template;
+    }
+}
+--------------------------------------------------------
+@Autowired
+private RedisTemplate<String, Object> redisTemplate;
+
+public void saveData(String key, Object value) {
+    redisTemplate.opsForValue().set(key, value);
+}
+
+public Object getData(String key) {
+    return redisTemplate.opsForValue().get(key);
+}
+---------------------------------
+You can also define a Redis-backed repository using Spring Data’s @RedisHash annotation.
+
+@RedisHash("Person")
+public class Person {
+    @Id
+    private String id;
+    private String name;
+    private int age;
+
+    // Getters and Setters
+}
+
+public interface PersonRepository extends CrudRepository<Person, String> {
+}
+
+using the repositry
+
+@Autowired
+private PersonRepository personRepository;
+
+public void savePerson(Person person) {
+    personRepository.save(person);
+}
+
+public Optional<Person> getPersonById(String id) {
+    return personRepository.findById(id);
+}
+
+--------------------------------
+using other data types like set/hash/list
+This example for Set
+
+@Autowired
+private RedisTemplate<String, Object> redisTemplate;
+
+// Add elements to a Set
+public void addToSet(String key, String... values) {
+    redisTemplate.opsForSet().add(key, values);
+}
+
+// Get all members in a Set
+public Set<Object> getMembers(String key) {
+    return redisTemplate.opsForSet().members(key);
+}
+
+// Remove elements from a Set
+public void removeFromSet(String key, String... values) {
+    redisTemplate.opsForSet().remove(key, values);
+}
+
+// Check if a Set contains an element
+public Boolean isMember(String key, String value) {
+    return redisTemplate.opsForSet().isMember(key, value);
+}
+--------------------------------------------------------
+
+This example for Hash
+@Autowired
+private RedisTemplate<String, Object> redisTemplate;
+
+// Add or update an entry in a Hash
+public void putInHash(String key, String hashKey, String value) {
+    redisTemplate.opsForHash().put(key, hashKey, value);
+}
+
+// Get a specific entry from a Hash
+public Object getFromHash(String key, String hashKey) {
+    return redisTemplate.opsForHash().get(key, hashKey);
+}
+
+// Get all entries in a Hash
+public Map<Object, Object> getAllFromHash(String key) {
+    return redisTemplate.opsForHash().entries(key);
+}
+
+// Remove an entry from a Hash
+public void deleteFromHash(String key, String hashKey) {
+    redisTemplate.opsForHash().delete(key, hashKey);
+}
+
+// Check if a Hash contains a specific key
+public Boolean hasHashKey(String key, String hashKey) {
+    return redisTemplate.opsForHash().hasKey(key, hashKey);
+}

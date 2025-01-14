@@ -1,0 +1,83 @@
+The Strategy Design Pattern is a behavioral design pattern that defines a family of algorithms, encapsulates each one, and makes them interchangeable. This pattern allows algorithms to be selected at runtime and promotes flexibility in a system by decoupling the algorithm from the code that uses it.
+
+
+Step-by-Step Implementation
+Define a Strategy Interface: This interface will declare a method that all payment strategies need to implement.
+
+java
+Copy code
+// PaymentStrategy.java
+public interface PaymentStrategy {
+    void pay(double amount);
+}
+Implement Concrete Strategies: Create classes for each payment method that implement the PaymentStrategy interface.
+
+java
+Copy code
+// CreditCardPayment.java
+public class CreditCardPayment implements PaymentStrategy {
+    private String cardNumber;
+    private String cardHolderName;
+
+    public CreditCardPayment(String cardNumber, String cardHolderName) {
+        this.cardNumber = cardNumber;
+        this.cardHolderName = cardHolderName;
+    }
+
+    @Override
+    public void pay(double amount) {
+        System.out.println("Paid $" + amount + " using Credit Card.");
+    }
+}
+
+// PayPalPayment.java
+public class PayPalPayment implements PaymentStrategy {
+    private String email;
+
+    public PayPalPayment(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public void pay(double amount) {
+        System.out.println("Paid $" + amount + " using PayPal.");
+    }
+}
+Context Class: The main processing class uses the PaymentStrategy to perform the payment without knowing which specific payment method is used.
+
+java
+Copy code
+// ShoppingCart.java
+public class ShoppingCart {
+    private PaymentStrategy paymentStrategy;
+
+    // Setting the chosen payment strategy
+    public void setPaymentStrategy(PaymentStrategy paymentStrategy) {
+        this.paymentStrategy = paymentStrategy;
+    }
+
+    public void checkout(double amount) {
+        paymentStrategy.pay(amount);  // Delegates payment to the chosen strategy
+    }
+}
+Client Code: The client decides which payment strategy to use.
+
+java
+Copy code
+public class StrategyPatternExample {
+    public static void main(String[] args) {
+        ShoppingCart cart = new ShoppingCart();
+
+        // Using credit card payment
+        cart.setPaymentStrategy(new CreditCardPayment("1234-5678-9012-3456", "John Doe"));
+        cart.checkout(100.0);
+
+        // Using PayPal payment
+        cart.setPaymentStrategy(new PayPalPayment("johndoe@example.com"));
+        cart.checkout(200.0);
+    }
+}
+Ou
+
+
+

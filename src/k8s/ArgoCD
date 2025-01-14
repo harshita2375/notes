@@ -1,0 +1,3 @@
+
+Argo CD is a popular GitOps tool for managing and deploying applications in Kubernetes clusters. It allows you to define the desired state of your applications in a Git repository, and Argo CD will ensure that the actual state in your Kubernetes cluster matches this desired state.
+ Here’s a high-level overview of its key features and functionality:

@@ -1,0 +1,4 @@
+Redis Slave
+Database slaves are useful for a number of reasons. You might need them to
+load-balance your queries, keep hot standby servers, perform maintenance
+operations, or simply inspect your data.

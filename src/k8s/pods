@@ -1,0 +1,31 @@
+
+colocate multiple applications into a single atomic unit, scheduled
+onto a single machine.
+
+A Pod represents a collection of application containers and volumes running in
+the same execution environment. Pods, not containers, are the smallest
+deployable artifact in a Kubernetes cluster. This means all of the containers in a
+Pod always land on the same machine.
+Applications running in the same Pod share the same IP address and port space
+(network namespace), have the same hostname (UTS namespace), and can
+communicate using native interprocess communication channels over System V
+IPC or POSIX message queues (IPC namespace). However, applications in
+different Pods are isolated from each other; they have different IP addresses,
+different hostnames, and more. Containers in different Pods running on the same
+node might as well be on different servers.
+
+Pod Manifest
+Pods are described in a Pod manifest. The Pod manifest is just a text-file
+representation of the Kubernetes API object.
+
+Pods represent the atomic unit of work in a Kubernetes cluster. Pods are
+comprised of one or more containers working together symbiotically. To create a
+Pod, you write a Pod manifest and submit it to the Kubernetes API server by
+using the command-line tool or (less frequently) by making HTTP and JSON
+calls to the server directly.
+Once you’ve submitted the manifest to the API server, the Kubernetes scheduler
+finds a machine where the Pod can fit and schedules the Pod to that machine.
+Once scheduled, the kubelet daemon on that machine is responsible for creating
+the containers that correspond to the Pod, as well as performing any health
+checks defined in the Pod manifested.
+

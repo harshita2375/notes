@@ -1,0 +1,64 @@
+import java.util.concurrent.*;
+
+public class LeakyBucketAlgo {
+    private final int capacity;
+    private final int leakRate; // tokens leaked per second
+    private int currentWater;
+    private long lastLeakTime;
+
+    public LeakyBucket(int capacity, int leakRate) {
+        this.capacity = capacity;
+        this.leakRate = leakRate;
+        this.currentWater = 0;
+        this.lastLeakTime = System.nanoTime();
+    }
+
+    // Call this method to try to add a packet of size 'size' to the bucket
+    public synchronized boolean addPacket(int size) {
+        leak();
+        if (currentWater + size <= capacity) {
+            currentWater += size;
+            return true; // packet accepted
+        } else {
+            return false; // packet rejected
+        }
+    }
+
+    // Simulate leaking water from the bucket
+    private void leak() {
+        long now = System.nanoTime();
+        long timeElapsed = now - lastLeakTime;
+
+        int tokensToLeak = (int) (timeElapsed / 1_000_000_000.0 * leakRate);
+        if (tokensToLeak > 0) {
+            currentWater = Math.max(0, currentWater - tokensToLeak);
+            lastLeakTime = now;
+        }
+    }
+
+    // Get the current water level in the bucket (for monitoring purposes)
+    public synchronized int getCurrentWaterLevel() {
+        leak();
+        return currentWater;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        LeakyBucket leakyBucket = new LeakyBucket(10, 1); // capacity = 10 tokens, leak rate = 1 token/second
+
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
+        // Simulate adding packets every 500 milliseconds
+        executor.scheduleAtFixedRate(() -> {
+            int packetSize = 3;
+            if (leakyBucket.addPacket(packetSize)) {
+                System.out.println("Packet of size " + packetSize + " added. Current water level: " + leakyBucket.getCurrentWaterLevel());
+            } else {
+                System.out.println("Packet of size " + packetSize + " rejected. Current water level: " + leakyBucket.getCurrentWaterLevel());
+            }
+        }, 0, 500, TimeUnit.MILLISECONDS);
+
+        // Let the simulation run for 10 seconds
+        Thread.sleep(10000);
+        executor.shutdownNow();
+    }
+}

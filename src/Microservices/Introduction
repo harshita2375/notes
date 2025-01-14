@@ -1,0 +1,12 @@
+Microservices are an approach to distributed systems that promote the use of finely
+grained services with their own lifecycles, which collaborate together.
+
+--------------------
+1.drawing service boundaries on business boundaries.
+
+this follows SOA
+Service-oriented architecture (SOA) is a design approach where multiple services
+collaborate to provide some end set of capabilities.
+
+
+

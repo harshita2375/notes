@@ -1,0 +1,4 @@
+REpresentational State Transfer (REST) is an architectural style inspired by the Web.
+
+- s avoid the coupling between client and server
+- rest support , XML, json, binary, HTML

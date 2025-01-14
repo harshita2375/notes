@@ -1,0 +1,21 @@
+Collections
+A collection is a group of documents. If a document is the MongoDB analog of a row
+in a relational database, then a collection can be thought of as the analog to a table.
+A collection is identified by its name. Collection names can be any UTF-8 string,
+
+
+Schema-Free
+Collections are schema-free. This means that the documents within a single collection
+can have any number of different “shapes.”
+For example, both of the following documents could be stored in a
+single collection:
+
+{"greeting" : "Hello, world!"}
+{"foo" : 5}
+
+
+- It is much faster to get a list of collections than to extract a list of the types in a
+  collection.
+- We begin to impose some structure on our documents when we create indexes
+-
+

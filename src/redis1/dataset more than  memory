@@ -1,0 +1,31 @@
+Often you might find yourself with a dataset that won’t fit in your available
+memory. While you could try to get around that by adding more RAM or
+sharding (which in addition would allow you to scale horizontally)
+
+
+Redis has supported a feature called Virtual Memory (VM) since version
+2.0. This allows you to have a dataset bigger than your available RAM by
+swapping rarely used values to disk and keeping all the keys and the
+frequently used values in memory. However, this has one downside: before
+Redis reads or performs an operation on swapped values, they must be read
+into real memory.
+
+
+The keys are always kept in memory. This means that if you have a big
+number of small keys, VM might not be the best option for you or you
+might have the change your data structure and use large strings, hashes,
+lists, or sets instead.
+VM is ideal for some patterns of data access, not all. If you regularly
+query all your data, VM is probably not a good fit because your Redis
+server might end up blocking clients in order to fetch the values from
+disk. VM is ideally suited for situations when you have a reasonable
+amount of frequently accessed values that fit in memory.
+Doing a full dump of your Redis server will be extremely slow. In order
+to generate a snapshot, Redis needs to read all the values swapped to
+disk in order to write them to the RDB file (see Configuring
+Persistence). This generates a lot of I/O. Due to this, it might be better
+for you to use AOF as a persistence mode.
+VM also affects the speed of replication, because Redis masters need to
+perform a BGSAVE when a new slave connects.
+
+

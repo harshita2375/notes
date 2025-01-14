@@ -1,0 +1,13 @@
+The practical effect of this in our example is that an object of type Car can be assigned to a
+variable of type Vehicle. That is, it would be legal to say
+Vehicle myVehicle = myCar;
+or even
+Vehicle myVehicle = new Car();
+5.5. INHERITANCE AND POLYMORPHISM 199
+After either of these statements, the variable myVehicle holds a reference to a Vehicle object
+that happens to be an instance of the subclass, Car. The object “remembers” that it is in fact
+a Car, and not just a Vehicle. Information about the actual class of an object is stored as part
+of that object. It is even possible to test whether a given object belongs to a given class, using
+the instanceof operator. The test:
+if (myVehicle instanceof Car) ...
+determines whether the object referred to by myVehicle is in fact a car.

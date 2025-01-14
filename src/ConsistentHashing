@@ -1,0 +1,107 @@
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+public class ConsistentHashing {
+
+    // Number of virtual nodes for each physical node (for better distribution)
+    private static final int VIRTUAL_NODES = 5;
+    private final SortedMap<Integer, String> circle = new TreeMap<>();
+    private final MessageDigest md;
+
+    public ConsistentHashing(String[] nodes) throws NoSuchAlgorithmException {
+        md = MessageDigest.getInstance("MD5");
+
+        // Add physical nodes and their virtual nodes to the hash circle
+        for (String node : nodes) {
+            addNode(node);
+        }
+    }
+
+    // Function to hash a given key
+    private int hash(String key) {
+        byte[] hash = md.digest(key.getBytes(StandardCharsets.UTF_8));
+        int result = ((hash[0] & 0xFF) << 24) | ((hash[1] & 0xFF) << 16) | ((hash[2] & 0xFF) << 8) | (hash[3] & 0xFF);
+        return result & 0x7FFFFFFF;  // Convert to positive integer
+    }
+
+    // Add a physical node and its virtual nodes to the hash ring
+    public void addNode(String node) {
+        for (int i = 0; i < VIRTUAL_NODES; i++) {
+            String virtualNode = node + "-VN" + i;
+            int hash = hash(virtualNode);
+            circle.put(hash, node);
+            System.out.println("Virtual node [" + virtualNode + "] added with hash " + hash);
+        }
+    }
+
+    // Remove a physical node and its virtual nodes from the hash ring
+    public void removeNode(String node) {
+        for (int i = 0; i < VIRTUAL_NODES; i++) {
+            String virtualNode = node + "-VN" + i;
+            int hash = hash(virtualNode);
+            circle.remove(hash);
+            System.out.println("Virtual node [" + virtualNode + "] removed.");
+        }
+    }
+
+    // Get the node responsible for the given key
+    public String getNode(String key) {
+        if (circle.isEmpty()) {
+            return null;
+        }
+
+        int hash = hash(key);
+        SortedMap<Integer, String> tailMap = circle.tailMap(hash);
+        int nodeHash = !tailMap.isEmpty() ? tailMap.firstKey() : circle.firstKey();
+        return circle.get(nodeHash);
+    }
+
+    public static void main(String[] args) throws NoSuchAlgorithmException {
+        // Define some example physical nodes
+        String[] nodes = {"Node1", "Node2", "Node3"};
+
+        // Initialize consistent hashing
+        ConsistentHashing consistentHash = new ConsistentHashing(nodes);
+
+        // Example of finding nodes responsible for keys
+        String[] keys = {"Key1", "Key2", "Key3", "Key4", "Key5"};
+
+        for (String key : keys) {
+            String node = consistentHash.getNode(key);
+            System.out.println("Key [" + key + "] is assigned to Node [" + node + "]");
+        }
+
+        // Adding a new node to the hash circle
+        System.out.println("\nAdding Node4...");
+        consistentHash.addNode("Node4");
+
+        for (String key : keys) {
+            String node = consistentHash.getNode(key);
+            System.out.println("Key [" + key + "] is assigned to Node [" + node + "]");
+        }
+    }
+}
+
+
+----------------------------------------------------------------------------------------
+TreeMap and SortedMap in Java are both used to store elements in a sorted order based on the keys, but there are a few differences in how they are used and implemented. Here’s a breakdown of each:
+
+1. TreeMap
+Implementation: TreeMap is a concrete class that implements the NavigableMap interface, which in turn extends SortedMap.
+Data Structure: Internally, TreeMap is based on a Red-Black Tree, which ensures that all entries are sorted by their keys.
+Sorting Order: By default, it sorts in natural order (e.g., ascending order for numbers, alphabetical for strings), but you can provide a custom Comparator to define a different sorting order.
+Time Complexity: Common operations like get, put, and remove have a time complexity of
+𝑂
+(
+log
+⁡
+𝑛
+)
+O(logn) due to the tree structure.
+Null Handling: TreeMap does not allow null keys, but null values are permitted.
+Features:
+TreeMap provides several methods to navigate through its entries, such as firstKey(), lastKey(), ceilingKey(), and floorKey().
+Since TreeMap is part of NavigableMap, it allows for operations like retrieving sub-maps (subMap, headMap, tailMap) based on range queries.

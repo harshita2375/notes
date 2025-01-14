@@ -1,0 +1,6 @@
+- class printer<T>{
+
+  T printer
+}
+
+

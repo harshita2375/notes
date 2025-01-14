@@ -1,0 +1,41 @@
+Atomic classes in Java, found in the java.util.concurrent.atomic package, provide atomic operations on single variables. These classes ensure that operations on the variables are atomic, meaning they are performed as a single, indivisible unit without interference from other threads. This is particularly useful in multithreaded environments where multiple threads may concurrently access and modify shared variables. Here are some commonly used atomic classes in Java:
+
+AtomicBoolean: Provides atomic operations on a boolean variable.
+AtomicInteger: Provides atomic operations on an integer variable.
+AtomicLong: Provides atomic operations on a long variable.
+AtomicReference: Provides atomic operations on a reference variable.
+AtomicIntegerArray: Provides atomic operations on an array of integers.
+AtomicLongArray: Provides atomic operations on an array of longs.
+AtomicReferenceArray: Provides atomic operations on an array of references.
+These atomic classes typically provide methods such as get, set, compareAndSet, getAndSet, and various arithmetic methods that are executed atomically. Here's a brief overview of some commonly used methods:
+
+get: Retrieves the current value of the variable.
+set: Sets the value of the variable.
+compareAndSet: Atomically compares the current value with an expected value and updates it if they match.
+getAndSet: Atomically sets the value of the variable and returns its previous value.
+Atomic classes are often used in scenarios where you need to ensure that operations on shared variables are performed atomically without the need for explicit synchronization using synchronized blocks or methods. This can lead to more efficient and scalable concurrent programs.
+
+Here's a simple example demonstrating the usage of AtomicInteger:
+
+java
+Copy code
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class AtomicIntegerExample {
+    public static void main(String[] args) {
+        AtomicInteger counter = new AtomicInteger(0);
+
+        // Thread 1
+        new Thread(() -> {
+            int value = counter.incrementAndGet();
+            System.out.println("Thread 1: " + value);
+        }).start();
+
+        // Thread 2
+        new Thread(() -> {
+            int value = counter.incrementAndGet();
+            System.out.println("Thread 2: " + value);
+        }).start();
+    }
+}
+In this example, AtomicInteger ensures that the incrementAndGet operation is atomic, even though it's performed by different threads.

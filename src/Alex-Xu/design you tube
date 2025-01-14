@@ -1,0 +1,23 @@
+- blob storage /cdn
+Video streaming
+MPEG DASH
+APPLE HLS
+Microsoft Smooth Streaming
+Adobe HTTP Dynamic streaming
+--------------------------------------------------------------
+video transcoding
+you want the video to be played smoothly on other devices, the video must
+be encoded into compatible bitrates and formats. Bitrate is the rate at which bits are processed
+over time.
+
+DAG Scheduler
+-------------
+The DAG scheduler splits a DAG graph into stages of tasks and puts them in the task queue
+in the resource manager.
+
+Resource manager is repsonsible for effieciency of resource allocation.
+
+Task Que:
+Worker queue:
+Running queue:
+Task sche:

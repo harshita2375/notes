@@ -1,0 +1,41 @@
+Data gathering
+
+maintain frequency of words.
+Agregated logs
+
+we can update Trie hourly or once in day with agrreagted dat
+
+
+
+query service
+-----------
+returns top k searched words
+ - Relational DB aren't effienct
+ - trie
+
+find the prefix, get all teh words from the prefic and sort them
+- however this approach is slow as well.we can introduce caching this info in cache
+somewhere and update it offline.
+we can ache this info at each .
+
+Trie DB
+option 1: Documnet store
+serialise the data and store it mongo db like doc store
+
+option 2: key value store
+-Every prefic mapped to a key.
+- data on trie
+
+trie cache
+---------
+store info in some distributed cache for faster read.
+
+Filter layer
+----
+filter layer before cache layer
+
+Scale the storage
+-----------------
+spilt trie into multiple trie
+- spilt by first char [26 trie]
+- spilt by second [26*26]

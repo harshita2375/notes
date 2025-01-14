@@ -1,0 +1,30 @@
+ Querying returns a subset
+of documents in a collection, from no documents at all to the entire collection.
+
+ Querying for a simple type is as
+45
+easy as specifying the value that you are looking for. For example, to find all documents
+where the value for "age" is 27, we can add that key/value pair to the query document:
+> db.users.find({"age" : 27})
+If we have a string we want to match, such as a "username" key with the value "joe",
+we use that key/value pair instead:
+> db.users.find({"username" : "joe"})
+Multiple conditions can be strung together by adding more key/value pairs to the query
+document, which gets interpreted as “condition1 AND condition2 AND … AND
+conditionN.” For instance, to get all users who are 27-year-olds with the username
+“joe,” we can query for the following:
+> db.users.find({"username" : "joe", "age" : 27})
+
+The value of a query document must be a constant as far as the database is concerned. (It can be a normal variable in your own code.)
+That is, it cannot refer to the value of another key in the document. For example, if we
+were keeping inventory and we had both "in_stock" and "num_sold" keys, we could
+compare their values by querying the following:
+> db.stock.find({"in_stock" : "this.num_sold"}) // doesn't work
+
+- Query conditionals
+<,>,>=,<=  === {"$lt", "$lte", "$gt", and "$gte"}
+
+regex
+
+cursors
+

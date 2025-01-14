@@ -1,0 +1,28 @@
+Insert
+When you perform an insert, the driver you are using converts the data structure into
+BSON, which it then sends to the database (see Appendix C for more on BSON). The
+database understands BSON and checks for an "_id" key and that the document’s size
+does not exceed 4MB, but other than that, it doesn’t do data validation; it just saves
+the document to the database as is. This has a couple of side effects, most notably that
+you can insert invalid data and that your database is fairly secure from injection attacks.
+
+
+Remove
+The remove function optionally takes a query document as a parameter. When it’s given,
+only documents that match the criteria will be removed. Suppose, for instance, that we
+want to remove everyone from the mailing.list collection where the value for "optout" is true:
+> db.mailing.list.remove({"opt-out" : true})
+Once data has been removed, it is gone forever. There is no way to undo the remove
+or recover deleted document.
+
+Updating
+Updating Documents
+Once a document is stored in the database, it can be changed using the update method.
+update takes two parameters: a query document, which locates documents to update,
+and a modifier document, which describes the changes to make to the documents
+found.
+Updates are atomic: if two updates happen at the same time, whichever one reaches
+the server first will be applied, and then the next one will be applied. Thus, conflicting
+updates can safely be sent in rapid-fire succession without any documents being corrupted: the last update will “win.
+
+

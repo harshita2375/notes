@@ -1,0 +1,29 @@
+lasticsearch is a real-time distributed search and analytics engine. It allows you to
+explore your data at a speed and at a scale never before possible.
+
+However, Elasticsearch is much more than just Lucene and much more than “just” full
+text search. It is also:
+• A distributed real-time document store where every field is indexed and searchable.
+• A distributed search engine with real-time analytics.
+• Capable of scaling to hundreds of servers and petabytes of structured and unstruc‐
+tured data.
+
+Elasticsearch is document oriented, meaning that it stores entire objects or documents.
+Not only does it store them, it also indexes the contents of each document in order to
+make them searchable.
+
+JSON
+ElsticSearch uses JSON(JavaScript Object Notation) as the serialization format for
+ documents.
+
+
+Inverted index
+Relational databases add an index, such as a B-Tree index, to specific columns in
+order to improve the speed of data retrieval. Elasticsearch and Lucene use a struc‐
+ture called an inverted index for exactly the same purpose.
+By default, every field in a document is indexed (has an inverted index) and thus is
+searchable. A field without an inverted index is not searchable. We discuss inverted
+indexes in more detail.
+
+Add an index
+To add data to Elasticsearch, we need an index —

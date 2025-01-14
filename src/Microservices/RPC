@@ -1,0 +1,11 @@
+Remote procedure call refers to the technique of making a local call and having it execute
+on a remote service somewhere.
+Many implementations of RPC, though, hide too much.
+The drive in some forms of RPC to make remote method
+calls look like local method calls hides the fact that these two things are very different.
+I can make large numbers of local, in-process calls without worrying overly about the
+performance.
+With RPC, though, the cost of marshalling and un-marshalling payloads can
+be significant, not to mention the time taken to send things over the network.
+
+BrittleNess - any change ins erver needs  to regenerate client stubs as well.

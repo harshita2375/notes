@@ -1,0 +1,50 @@
+- In-memory datset for speed. it is not simple key value store but a rather
+data structure server.
+- Redis allow binary safe string,hashes , sorted
+- no =swl , no sql supports chaning data structure.
+
+One thing to keep in mind is that NoSQL databases generally don’t provide
+ACID (atomicity, consistency, isolation, durability), or do it only partially.
+This allows them to make a few tradeoffs that wouldn’t be possible
+otherwise. Redis provides partial ACID compliance by design due to the
+fact that it is single threaded (which guarantees consistency and isolation),
+and full compliance if configured with appendfsync always, providing
+durability as well.
+
+- configuring persistancec
+The default persistence model is snapshotting, which consists of saving the
+entire database to disk in the RDB format (basically a compressed database
+dump). This can be done periodically at set times, or every time a
+configurable number of keys changes.
+The alternative is using an Append Only File (AOF). This might be a better
+option if you have a large dataset or your data doesn’t change very
+frequently.
+
+snapshotting
+As previously stated, snapshotting is the default persistence mode for Redis.
+It asynchronously performs a full dump of your database to disk,
+overwriting the previous dump only if successful. Therefore, the latest
+dump should always be in your dbfilename location.
+You can configure snapshotting using save seconds keys-changed
+statements in your configuration file, in the following format:
+save seconds keys-changed.
+The snapshot will occur when both conditions match. A typical example
+that ensures that all your data is saved every few minutes is: save 600 1
+which will perform a snapshot every 10 minutes if any key in your server
+has changed.
+
+ou can manually trigger snapshotting with the SAVE and BGSAVE commands.
+BGSAVE forks the main Redis process and saves the DB to disk in the
+background. Redis executes this operation itself if you have SAVE
+statements in your configuration file. SAVE performs the same operation as
+BGSAVE but does so in the foreground, thereby blocking your Redis server.
+
+If you come to the conclusion that snapshotting is putting too much strain
+on your Redis servers you might want to consider using slaves for
+persistence (by commenting out all the save statements in your masters and
+enabling them only on the slaves), or using AOF instead. In particular, if
+you have a big dataset or a dataset that doesn’t change often, consider using
+AOF.
+
+
+

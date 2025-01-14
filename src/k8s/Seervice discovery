@@ -1,0 +1,25 @@
+The Domain Name System (DNS) is the traditional system of service discovery
+on the internet. DNS is designed for relatively stable name resolution with wide
+and efficient caching. It is a great system for the internet but falls short in the
+dynamic world of Kubernetes.
+many systems (for example, Java, by default) look up a name in
+DNS directly and never re-resolve.
+
+Service object
+--------------
+Real service discovery in Kubernetes starts with a Service object.
+A Service object is a way to create a named label selector. As we will see, the
+Service object does some other nice things for us too.
+
+Service DNS
+-----------
+cluster IP is virtual it is stable and it is appropriate to give it a DNS
+address.All of the issues around clients caching DNS results no longer apply.
+Within a namespace, it is as easy as just using the service name to connect to one
+of the pods identified by a service.
+Kubernetes provides a DNS service exposed to Pods running in the cluster.
+ThisKubernetes DNS service was installed as a system component when the cluster
+was first created. The DNS service is, itself, managed by Kubernetes and is a
+great example of Kubernetes building on Kubernetes.
+
+

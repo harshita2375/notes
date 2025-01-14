@@ -1,0 +1,56 @@
+As a rule of thumb, you should create an index that contains all of the keys in your
+query. For instance, to optimize the previous query, you should have an index on
+date and username:
+> db.ensureIndex({"date" : 1, "username" : 1})
+
+
+Sharding
+Sharding refers to the process of splitting data up and storing different portions of the
+data on different machines; the term partitioning is also sometimes used to describe
+this concept. By splitting data up across machines, it becomes possible to store more
+data and handle more load without requiring large or powerful machines.
+
+AutoSharding
+The basic concept behind MongoDB’s sharding is to break up collections into smaller
+chunks. These chunks can be distributed across shards so that each shard is responsible
+for a subset of the total data set. We don’t want our application to have to know what
+shard has what data, or even that our data is broken up across multiple shards, so we
+run a routing process called mongos in front of the shards.
+The router, knowing
+what data is on which shard, is able to forward the requests to the appropriate shard
+If there are responses to the request, the router collects them and sends them back to
+the application.
+In a nonsharded MongoDB setup, you would have a client connecting to a mongod
+process. In a sharded setup, the client connects to
+a mongos process, which abstracts the sharding away from the application.
+
+When to shard
+
+In a nonsharded MongoDB setup, you would have a client connecting to a mongod
+process, like in Figure 10-1. In a sharded setup, like Figure 10-2, the client connects to
+a mongos process, which abstracts the sharding away from the application.
+
+
+Shard keys
+When you set up sharding, you choose a key from a collection and use that key’s values
+to split up the data. This key is called a shard key.
+ suppose we had a collection of documents representing people. If we chose "name" as our shard key, one shard could hold
+documents where the "name" started with A–F, the next shard could hold names from
+G–P, and the final shard would hold names from Q–Z.
+
+Sharding an existing Collection
+Suppose we have an existing collection of logs and we want to shard it. If we enable
+sharding and tell MongoDB to use "timestamp" as the shard key, we’ll have a single
+shard with all of our data.
+Now, suppose we add a new shard. Once this shard is up and running, MongoDB will
+break up the collection into two pieces, called chunks. A chunk contains all of the
+documents for a range of values for the shard key, so one chunk would have documents
+with a timestamp value between -∞ and, say, June 26, 2003, and the other chunk would
+have timestamps between June 27, 2003 and ∞. One of these chunks would then be
+moved to the new shard.
+
+Incrementing Shard Keys Versus Random Shard Keys
+
+
+How Shard Keys Affect Operations
+

@@ -1,0 +1,50 @@
+Document Db
+-
+MongoDB is a document-oriented database, not a relational one. The primary reason
+for moving away from the relational model is to make scaling out easier, but there are
+some other advantages as well.
+The basic idea is to replace the concept of a “row” with a more flexible model, the
+“document.” By allowing embedded documents and arrays, the document-oriented
+approach makes it possible to represent complex hierarchical relationships with a single
+record
+
+Mode of interaction
+MongoDB uses a binary wire protocol as the primary mode of interaction
+with the server (as opposed to a protocol with more overhead, like HTTP/REST)
+
+-
+
+Features
+
+Indexing
+MongoDB supports generic secondary indexes, allowing a variety of fast queries,
+and provides unique, compound, and geospatial indexing capabilities as well.
+
+Aggregation
+MongoDB supports MapReduce and other aggregation tools
+
+File storage
+Mon
+goDB supports an easy-to-use protocol for storing large files and file metadata
+
+adminitration
+If a master server goes down, MongoDB can automatically
+failover to a backup slave and promote the slave to a master. In a distributed environment,
+ the cluster needs to be told only that a new node exists to o automatically integrate
+ and configure it
+
+//
+document
+A document is the basic unit of data for MongoDB, roughly equivalent to a row in
+a relational database management system (but much more expressive).
+
+collection
+a collection can be thought of as the schema-free equivalent of a table.
+
+instance
+A single instance of MongoDB can host multiple independent databases, each of
+ which can have its own collections and permissions.
+
+_id
+Every document has a special key, "_id", that is unique across the document’s
+collection.

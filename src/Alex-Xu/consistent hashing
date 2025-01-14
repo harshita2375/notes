@@ -1,0 +1,31 @@
+Consistent hashing is a special kind of hashing such that when a
+hash table is re-sized and consistent hashing is used, only k/n keys need to be remapped on
+average, where k is the number of keys, and n is the number of slots.
+
+Hash servers
+Using the same hash function f, we map servers based on server IP or name onto the ring.
+Figure 5-5 shows that 4 servers are mapped on the hash ring.
+Hash keys
+that hash function used here is different and there is no modular operation.
+.
+
+Server loopkup
+To determine which server a key is stored on, we go clockwise from the key position on the
+ring until a server is found.
+
+Add a server
+Adding a new server will only require redistribution of a fraction of keys.
+after a new server 4 is added, only key0 needs to be redistributed. k1, k2, and
+k3 remain on the same servers.
+
+problem with basic approach
+1. it is impossible to keep the same size
+   of partitions on the ring for all servers considering a server can be added or removed.
+2. Second, it is possible to have a non-uniform key distribution on the ring.
+
+Virtual Nodes
+A virtual node refers to the real node, and each server is represented by multiple virtual nodes
+on the ring.
+
+find affected keys
+When a server is added or removed, a fraction of data needs to be redistributed.

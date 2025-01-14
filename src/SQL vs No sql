@@ -1,0 +1,72 @@
+- data that are a particularly good fit for nonrelation storage are
+transactional details, historical data, and server logs. These are normally
+highly dynamic, changing quite often, and their storage tends to grow quite
+quickly, further compounding the problem of adjusting the schema to store
+them.
+
+-Another way to gauge the fit for NoSQL is to look at whether you find
+ yourself denormalizing your data for performance reasons, and no longer
+ benefit from some of the advantages of a
+
+ -Performance can also be a key factor. NoSQL databases are generally faster,
+  particularly for write operations, making them a good fit for applications
+  that are write-heavy.
+
+ -MongoDB (a popular NoSQL database) is a
+  feature-heavy document database that allows you to perform range queries,
+  regular expression searches, indexing, and MapReduce. You should weigh
+  all the factors when choosing your database.
+
+  MongoDB supports MapReduce operations to perform data processing and aggregation across large datasets. This feature is particularly useful for complex operations that go beyond simple aggregation, allowing custom JavaScript functions for both mapping and reducing data. Here’s a high-level overview of how it works:
+
+  1. Map Function
+  The map function is a JavaScript function that processes each document in a collection.
+  This function emits key-value pairs for each document. The key is used to group results, and the value is the data that will be passed to the reduce function.
+  The output of the map phase is a collection of intermediate key-value pairs.
+  2. Reduce Function
+  The reduce function takes the key and a list of values associated with that key.
+  It aggregates these values and returns a single result per key.
+  The reduce function is also written in JavaScript, allowing custom data manipulation and aggregation.
+  3. Finalize Function (Optional)
+  An optional finalize function can further process the output after the reduce phase.
+  This can be useful for additional transformations, such as calculating averages or applying final formatting.
+  4. Running MapReduce in MongoDB
+  MapReduce is initiated using the db.collection.mapReduce() command, which takes the map, reduce, and optional finalize functions as arguments.
+  You can specify options such as:
+  out: Defines where the results go, such as in a new collection.
+  query: Filters the input documents for the MapReduce operation.
+  sort: Sorts the documents before processing.
+  limit: Limits the number of documents to process.
+  Example of MapReduce in MongoDB
+  javascript
+  Copy code
+  db.collection.mapReduce(
+     function() { emit(this.category, this.price); },  // Map function
+     function(key, values) { return Array.sum(values); },  // Reduce function
+     {
+       out: "category_totals",
+       query: { status: "active" },
+       finalize: function(key, reducedValue) { return reducedValue.toFixed(2); }
+     }
+  )
+  Limitations
+  MongoDB MapReduce is less performant compared to its aggregation framework and doesn’t support all aggregation needs. It’s also recommended for use only when the aggregation framework cannot handle specific requirements, as MapReduce operations are more resource-intensive and can be slower.
+
+  For most modern applications, MongoDB’s aggregation pipeline is preferred, as it’s optimized for large-scale data processing with more efficiency and flexibility.
+
+
+
+
+
+
+
+
+  - Redis is extremely fast, making it perfectly suited for
+    applications that are write-heavy, data that changes often, and data that
+    naturally fits one of Redis’s data structures (for instance, analytics data). A
+    scenario where you probably shouldn’t use Redis is if you have a very large
+    dataset of which only a small part is “hot” (accessed often) or a case where
+    your dataset doesn’t fit in memory.
+
+   -
+

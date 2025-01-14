@@ -1,0 +1,82 @@
+Consistency: consistency means all clients see the same data at the same time no matter
+which node they connect to.
+Availability: availability means any client which requests data gets a response even if some
+of the nodes are down.
+Partition Tolerance: a partition indicates a communication break between two nodes.
+Partition tolerance means the system continues to operate despite network partitions.
+
+In distributed system network failure is unavidable , hence distributes sytem must tolereate
+network partition.
+In a distributed system, partitions cannot be avoided, and when a partition occurs, we must
+choose between consistency and availability.
+--------------------------------------------------
+if consitency is required,
+we must block all write operations to
+n1 and n2 to avoid data inconsistency among these three servers, which makes the system
+unavailable.
+If
+inconsistency occurs due to a network partition, the bank system returns an error before the
+inconsistency is resolved.if we choose availability over consistency (AP system), the system keeps accepting
+reads, even though it might return stale data.
+------------------------------------------------------------
+consistency
+Since data is replicated at multiple nodes, it must be synchronized across replicas. Quorum
+consensus can guarantee consistency for both read and write operations.
+N = The number of replicas
+W = A write quorum of size W. For a write operation to be considered as successful, write
+operation must be acknowledged from W replicas.
+R = A read quorum of size R. For a read operation to be considered as successful, read
+operation must wait for responses from at least R replicas.
+The configuration of W, R and N is a typical tradeoff between latency and consistency.
+If W + R > N, strong consistency is guaranteed because there must be at least one
+overlapping node that has the latest data to ensure consistency.
+Strong consistency is usually achieved by forcing a replica not to accept new reads/writes
+until every replica has agreed on current write. This approach is not ideal for highly available
+systems because it could block new operations. Dynamo and Cassandra adopt eventual
+consistency, which is our recommended consistency model for our key-value store.
+-----------------------------------------------------------------------
+Inconsistency resolution:versioning
+Versioning means treating each data modification as a new immutable version of data.
+versioning system that can detect conflicts and reconcile conflicts. A
+vector clock is a common technique to solve this problem.
+A vector clock is a [server, version] pair associated with a data item.
+It can be used to check if one version precedes, succeeds, or in conflict with others.
+
+Even though vector clocks can resolve conflicts, there are two notable downsides. First,
+vector clocks add complexity to the client because it needs to implement conflict resolution
+logic.
+the [server: version] pairs in the vector clock could grow rapidly. To fix this
+problem, we set a threshold for the length, and if it exceeds the limit, the oldest pairs are
+removed. This can lead to inefficiencies in reconciliation because the descendant relationship
+cannot be determined accurately.
+
+Better solution is gossip protocol
+• Each node maintains a node membership list, which contains member IDs and heartbeat
+counters.
+• Each node periodically increments its heartbeat counter.
+• Each node periodically sends heartbeats to a set of random nodes, which in turn
+propagate to another set of nodes.
+• Once nodes receive heartbeats, membership list is updated to the latest info.
+• If the heartbeat has not increased for more than predefined periods, the member is
+considered as offline.
+A technique called “sloppy quorum” [4] is used to improve availability. Instead of enforcing
+the quorum requirement, the system chooses the first W healthy servers for writes and first R
+healthy servers for reads on the hash ring.
+Hinted handoff is used to handle temporary failures.Anti-entropy involves comparing each piece of data on replicas
+each replica to the newest version.
+This is done by using merkel trees
+
+write path (cassandra)
+1. The write request is persisted on a commit log file.
+2. Data is saved in the memory cache.
+3. When the memory cache is full or reaches a predefined threshold, data is flushed to
+SSTable [9] on disk.
+read path
+After a read request is directed to a specific node, it first checks if data is in the memory
+cache. If so, the data is returned to the client as shown
+If the data is not in memory, it will be retrieved from the disk instead.
+1. The system first checks if data is in memory. If not, go to step 2.
+2. If data is not in memory, the system checks the bloom filter.
+3. The bloom filter is used to figure out which SSTables might contain the key.
+4. SSTables return the result of the data set.
+5. The result of the data set is returned to the client.

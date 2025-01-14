@@ -1,0 +1,5 @@
+Microsoft Azure offers a hosted Kubernetes-as-a-Service as part of the Azure
+Container Service.
+e official Kubernetes client is kubectl: a command-line tool for interacting
+with the Kubernetes API. kubectl can be used to manage most Kubernetes
+objects such as pods, ReplicaSets, and services.

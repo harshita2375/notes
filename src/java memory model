@@ -1,0 +1,22 @@
+1. where primitives are stored in java
+Primitives can be stored on both the stack and the heap. They are stored on the stack when they are local variables to methods,
+in other words, parameters to the method or variables declared inside the method itself.
+Primitives are stored on the heap when they are members of a class, that is, instance variable
+
+-------------------------------------------------------------------------------------------------------------------------
+2. how objects are stored in java
+Most Java objects are stored in the heap memory. The heap is a region of memory that is shared among all threads of a Java application. When you create an object using the new keyword, it is allocated memory from the heap. T
+he Java garbage collector manages the heap by reclaiming memory from objects that are no longer in use
+
+
+--------------------------------------------------------------
+stack memory
+The stack memory for a Java process is a region of memory dedicated to storing method call frames and local variables. Each thread in a Java process has its own stack memory.
+
+The exact size of the stack memory for each thread can vary depending on the JVM implementation and runtime parameters. Typically, the stack memory size is fixed when a thread is created and is relatively small compared to the heap memory.
+
+In Java, you can specify the stack size using the -Xss
+ss option specifies the stack size for each individual thread in the Java application, not for the entire application as a whole.
+
+-----------------------------------------------------------------------------------------
+H

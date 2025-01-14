@@ -1,0 +1,8 @@
+ddition to grouping documents by collection, MongoDB groups collections into
+databases. A single instance of MongoDB can host several databases, each of which can
+be thought of as completely independent.
+
+A database has its own permissions, and each database is stored in separate files on disk.
+ A good rule of thumb is to store all data for
+a single application in the same database. Separate databases are useful when storing
+data for several application or users on the same MongoDB server.

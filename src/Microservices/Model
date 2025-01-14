@@ -1,0 +1,7 @@
+we may encounter models with the same name that have very different
+meanings in different contexts too. For example, we might have the concept of a return,
+which represents a customer sending something back. Within the context of the customer,
+a return is all about printing a shipping label, dispatching a package, and waiting for a
+refund. For the warehouse, this could represent a package that is about to arrive, and a
+stock item that needs to be restocked. It follows that within the warehouse we store
+additional information associated with the return that relates to the tasks to be carried out..

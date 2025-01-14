@@ -1,0 +1,58 @@
+Request Token
+In order to get a request token, consumers send their key, a timestamp, a
+unique generated nonce, a callback url, and a request signature that is a hash
+of the request path and parameters using the consumer secret. (For security
+purposes, the consumer secret is never sent—it’s a pre-shared secret since
+both parts know it).
+
+
+The API provider needs to verify that the signature is correct using the key
+and secret, check whether this nonce/timestamp combination was used
+previously (to prevent replaying), and generate a new request token.
+
+In order to do so, the server needs to fetch the consumer data:
+HGETALL /consumers/key:dpf43f3p2l4k3l
+
+then check that this nonce hasn’t been used yet:
+SADD /nonces/key:dpf43f3p2l4k3l03/timestamp:20110306182600
+dji430splmx33448
+
+Using a set to store the nonce data has a few advantages. First, sets assure
+uniqueness (we’ll see in a minute how to tell whether the element was
+present already). Also, we can delete all the nonces for past requests after a
+chosen period of time, by setting expiration times on each one. For this
+application, let’s make the expiration time 30 minutes.
+Now, if someone was to attempt to replay this request by sending the same
+timestamp and nonce, issuing the same SADD command as before would
+return 0, indicating that this value was already present in the set. Should this
+happen, the provider should refuse to generate a new token.
+After validating all the data, we need to create a token and matching secret:
+
+
+Redirection and consent
+After successfully retrieving the request token, the consumer should
+redirect the user to the API provider, which will authenticate the user and
+authorize the application to access the user’s data. Should the user grant his
+permission, we’ll have to store it.
+
+SET /authorizations/request_token:hh5s93j4hdidpola 16
+Once that is done, we can redirect the user to the redirect URL we stored:
+HGET /consumers/key:dpf43f3p2l4k3l03 redirect_url
+
+
+-----------------------------------------------------------------------------------
+Exchanging the request token for an access token
+The access tokens are what the consumers need to authenticate with the
+API. These are obtained by submitting the consumer key, request token, and
+secret that were previously fetched and generating an access token. Most
+APIs that rely on OAuth do so for authentication purposes.
+
+As for the previous operations, we need to check whether the consumer key
+is valid and matches an existing application.
+HGET /request_tokens/key:dpf43f3p2l4k3l03 hh5s93j4hdidpola
+We also need to check the request token and a failure to find it would
+probably mean someoone is attempting to reuse a request token which is not
+ allowed by the spec.
+
+
+

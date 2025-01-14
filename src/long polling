@@ -1,0 +1,6 @@
+Long Polling
+Long Polling is a near-real-time data access pattern that predates WebSockets. A client initiates a TCP connection (usually an HTTP request) with a maximum duration (ie. 20 seconds). If the server has data to return, it returns the data immediately, usually in batch up to a specified limit. If not, the server pauses the request thread until data becomes available at which point it returns the data to the client.
+
+
+
+There are web sockets lib avaialable for same

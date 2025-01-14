@@ -1,0 +1,57 @@
+At the heart of MongoDB is the concept of a document: an ordered set of keys with
+associated values. The representation of a document differs by programming language,
+but most languages have a data structure that is a natural fit, such as a map, hash, or
+dictionary.
+
+Key/value pairs in documents are ordered—
+these 2 document is distinct from each other
+
+{"greeting" : "Hello, world!", "foo" : 3}
+{"foo" : 3, "greeting" : "Hello, world!"}
+
+- Values in documents are not just “blobs.” They can be one of several different data
+  types (or even an entire embedded document
+
+
+- keys document are strings.
+ocuments in MongoDB can be thought of as “JSON-like” in that they are conceptually
+similar to objects in JavaScript
+
+he commonly supported types and how they are represented as part of a document in the shell:
+null
+Null can be used to represent both a null value and a nonexistent field:
+{"x" : null}
+boolean
+There is a boolean type, which will be used for the values 'true' and 'false':
+{"x" : true}
+32-bit integer
+This cannot be represented on the shell. As mentioned earlier, JavaScript supports
+only 64-bit floating point numbers, so 32-bit integers will be converted into those.
+64-bit integer
+Again, the shell cannot represent these. The shell will display them using a special
+embedded document; see the section “Numbers” on page 18 for details.
+64-bit floating point number
+All numbers in the shell will be of this type. Thus, this will be a floating-point
+number:
+{"x" : 3.14}
+As will this:
+{"x" : 3}
+string
+Any string of UTF-8 characters can be represented using the string type:
+16 | Chapter 2: Getting Started
+{"x" : "foobar"}
+symbol
+This type is not supported by the shell. If the shell gets a symbol from the database,
+it will convert it into a string.
+object id
+An object id is a unique 12-byte ID for documents. See the section “_id and ObjectIds” on page 20 for details:
+{"x" : ObjectId()}
+date
+Dates are stored as milliseconds since the epoch. The time zone is not stored:
+{"x" : new Date()}
+regular expression
+Documents can contain regular expressions, using JavaScript’s regular expression
+syntax:
+{"x" : /foobar/i}
+code
+Documents can also contain JavaScript code:

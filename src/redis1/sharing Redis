@@ -1,0 +1,27 @@
+Problem
+Sharding is a horizontal partitioning tecnique often used with databases. It
+allows you to scale them by distributing your data across several database
+instances. Not only does this allow you to have a bigger dataset, as you can
+use more memory, it will also help if CPU usage is the problem, since you
+can distribute your instances through different servers (or servers with
+multiple CPUs).
+In Redis’s case, sharding can be easily implemented in the client library or
+application.
+
+sharding is a useful tecnique for scaling your application when your data no
+longer fits in a single server.
+
+Use a client with built-in sharding support
+
+
+Build sharding support yourself on top of an existing client
+This involves some programming that might not be too hard if you
+understand your dataset and applications thoroughly. At the very least,
+you’ll have to implement a partitioning rule and handle the connections
+to the different servers.
+Use a proxy that speaks the Redis protocol and does the sharding for you
+Redis Sharding is a multiplexed proxy that provides sharding to any
+Redis client. Instead of connecting directly to your Redis servers, you
+start a proxy and connect to it instead. Unfortunately at this moment,
+sharding doesn’t support resharding on the fly, so you’ll be unable to
+change the configuration of the cluster with the proxy running

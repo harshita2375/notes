@@ -1,0 +1,28 @@
+-Be consistent when defining your key space. Because a key can contain
+any characters, you can use separators to define a namespace with a
+semantic value for your business. An example might be using
+cache:project:319:tasks, where the colon acts as a namespace
+separator.
+-When defining your keys, try to limit them to a reasonable size.
+Retrieving a key from storage requires comparison operations, so
+keeping keys as small as possible is a good idea. Additionally, smaller
+keys are more effective in terms of memory usage.
+-Even though keys shouldn’t be exceptionally large, there are no big
+performance improvements for extremely small keys. This means you
+should design your keys in such a way that combines readability (to help
+you) and regular key sizes (to help Redis).
+
+Be consistent when defining your key space. Because a key can contain
+any characters, you can use separators to define a namespace with a
+semantic value for your business. An example might be using
+cache:project:319:tasks, where the colon acts as a namespace
+separator.
+When defining your keys, try to limit them to a reasonable size.
+Retrieving a key from storage requires comparison operations, so
+keeping keys as small as possible is a good idea. Additionally, smaller
+keys are more effective in terms of memory usage.
+Even though keys shouldn’t be exceptionally large, there are no big
+performance improvements for extremely small keys. This means you
+should design your keys in such a way that combines readability (to help
+you) and regular key sizes (to help Redis).
+

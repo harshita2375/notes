@@ -1,0 +1,18 @@
+Requests and Connections
+For each connection to a MongoDB server, the database creates a queue for that connection’s requests. When the client sends a request, it will be placed at the end of its
+connection’s queue. Any subsequent requests on the connection will occur after the
+enqueued operation is processed. Thus, a single connection has a consistent view of
+the database and can always read its own writes.
+Note that this is a per-connection queue: if we open two shells, we will have two connections to the database. If we perform an insert in one shell, a subsequent query in
+the other shell might not return the inserted document. However, within a single shell,
+if we query for the document after inserting, the document will be returned.
+Often developers run into this when they insert data in
+one thread and then check that it was successfully inserted in another. For a second or
+two, it looks like the data was not inserted, and then it suddenly appears.
+
+This behavior is especially worth keeping in mind when using the Ruby, Python, and
+Java drivers, because all three drivers use connection pooling. For efficiency, these
+drivers open multiple connections (a pool) to the server and distribute requests across
+them. They all, however, have mechanisms to guarantee that a series of requests is
+processed by a single connection. There is detailed documentation on connection
+pooling in various languages.

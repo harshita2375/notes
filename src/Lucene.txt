@@ -1,0 +1,9 @@
+document query using inverted index.
+Full-Text Search: Lucene allows for fast searching across large text datasets by indexing documents and providing various search capabilities (such as phrase searching, wildcards, fuzzy search, etc.).
+Document Indexing: Lucene indexes documents to optimize search performance. Each document can consist of several fields (like title, content, author, etc.).
+Tokenization: Lucene breaks down text into individual terms (tokens), removing stopwords and applying stemming algorithms to make searches more efficient.
+
+How Apache Lucene Works:
+Indexing:
+Lucene first converts a collection of documents (e.g., articles, blogs, etc.) into an inverted index. An inverted index is a data structure where each unique term points to the document IDs where it appears.
+During the indexing process, each document is processed to extract its terms (words), which are then stored in the index.

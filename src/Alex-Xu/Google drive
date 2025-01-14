@@ -1,0 +1,182 @@
+ Three component
+ 1. Web server
+ 2. Datbase for keeping metadta information
+ 3. Storage system for files. like Amazon s3 -Object Storage Service
+     Amson S3 support same -region and cross-region replication.
+
+
+ /drive directory looks like on the lef side
+
+API
+1.  Simple upload -
+
+    //api.exmaple.com.files/uploadType=resumable
+
+    uploaType = resumable
+
+2.  Resumable upload
+    /files/download
+    params: download file path
+
+3. Get file Revisions
+   /files/list_revisions
+   params:path to file you want to get revisions hostory
+
+   All API user authentication
+
+
+
+ Sync conflicts
+ How can we
+ resolve the conflict? Here is our strategy: the first version that gets processed wins, and the
+ version that gets processed later receives a conflict.
+
+MetaData --------- API -------- user ---- long polling ----- notification
+ Cache             Server                                      Service
+
+ - Block Server
+  Block servers upload blocks to cloud storage. Block storage, referred to as
+  block-level storage, is a technology to store data files on cloud-based environments. A file
+  can be split into several blocks, each with a unique hash value, stored in our metadata
+  database. Each block is treated as an independent object and stored in our storage system
+  (S3). To reconstruct a file, blocks are joined in a particular order. As for the block size, we
+  use Dropbox as a reference: it sets the maximal size of a block to 4MB.
+
+  Cloud storage : file is split into smaller blocks and stored in cloud storage.
+
+  Offline back up queue:
+  A client is offline, and cannot pull latest file changes.
+  the offline
+  backup queue stores the info so changes will be synced when the client is online.
+
+
+-------------------------------------------------------------------------
+Block Server
+For large files that are updated regularly, sending the whole file on each update consumes a
+lot of bandwidth. Two optimizations are proposed to minimize the amount of network traffic
+being transmitted
+• Delta sync. When a file is modified, only modified blocks are synced instead of the
+whole file using a sync algorithm
+• Compression. Applying compression on blocks can significantly reduce the data size.
+Thus, blocks are compressed using compression algorithms depending on file types. For
+example, gzip and bzip2 are used to compress text files. Different compression algorithms
+are needed to compress images and videos.
+block servers do the heavy lifting work for uploading files. Block servers
+process files passed from clients by splitting a file into blocks, compressing each block, and
+encrypting them. Instead of uploading the whole file to the storage system, only modified
+blocks are transferred.To ensure security, each block is encrypted before it is sent to cloud storage.
+---------------------------------------------------------------------
+High Consistency
+It is unacceptable for a file to be shown
+differently by different clients at the same time. The system needs to provide strong
+consistency for metadata cache and database layers.
+• Data in cache replicas and the master is consistent.
+• Invalidate caches on database write to ensure cache and database hold the same value.
+To acheive this , relational db are choosen.
+
+Schema
+user
+ -userId
+ - user_name
+
+ workspace
+ -id
+ -owner_id
+ -is_shared
+
+ file
+ -id
+ -file_name
+ -path-is_dir
+ -workspace
+
+block
+-block_id
+-file_version_id
+-block_order
+
+file_version
+-id
+-file_id
+-dice_id
+-version_num
+
+devide
+-device_id
+-user_id
+
+----------------------------------------------------------
+1.add file metadata
+2.upload status: "pending"
+ 2.1. upload file - to block server (chunk fileinto blocks , compress and
+ encrypt)
+ 2.2. upload file to cloud storage
+ 2.3. upload file metadata.
+ 2.4 mark status to "uploaded" in metadata db.
+3. notify changes to notification service
+4. notification service push notification to clinet 2.
+-notification service will inform online client that file is changed
+ so it need to pull the latest data
+- when file is changes by another client, data will be saved to the cache
+when the client is online again , it pulls the latest changes.
+
+data pull flow
+---------------
+once client knows a file is changed, it first requests metadata via API servers, then
+ downloads blocks from block servers to construct the file. block server will interna
+ lly download blocks from cloud storage.
+
+ -------------------------------------------------------------------------
+ Notification Service
+ To maintain file consistency, any mutation of a file performed locally needs to be informed to
+ other clients to reduce conflicts. Notification service is built to serve this purpose. At the
+ high-level, notification service allows data to be transferred to clients as events happen. Here
+ are a few options:
+ • Long polling. Dropbox uses long polling.
+ Long polling is more suitable as we don't need bidirectional communication
+ server send info to client about files chnages.
+ Each client establishes long polling to the notification service.
+
+ Save storage space
+ ------------------
+ - saving valuable versions only :
+ Some files might be edited frequently,limit the no of saved versions.
+
+ - Moving infrequently used file to cold storage.
+ ---------------------------------------------------------------------
+ Failure handling
+
+ Load balancer Failure
+ If a load balancer fails, the secondary would become active and
+ pick up the traffic. Load balancers usually monitor each other using a heartbeat, a periodic
+ signal sent between load balancers.
+
+ Block Server Failure
+If a load balancer fails, the secondary would become active and
+pick up the traffic. Load balancers usually monitor each other using a heartbeat, a periodic
+signal sent between load balancers.
+
+Cloud storage failure:
+S3 buckets are replicated multiple times in different regions. If
+files are not available in one region, they can be fetched from different regions.
+
+Metadata cache failure:
+Metadata cache servers are replicated multiple times. If one node
+goes down, you can still access other nodes to fetch data.
+We will bring up a new cache server to replace the failed one.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

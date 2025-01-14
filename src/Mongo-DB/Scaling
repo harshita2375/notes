@@ -1,0 +1,74 @@
+Read scaling
+
+One way to scale reads with MongoDB is to issue queries against slave nodes. By issuing
+queries on slaves, the workload for the master is reduced. In general, this is a good
+approach to scaling when your workload is read heavy—if you have a more writeintensive workload, see Chapter 10 to learn how to scale with autosharding.
+One important note about using slaves to scale reads in MongoDB is
+that replication is asynchronous. This means that when data is inserted
+or updated on the master, the data on the slave will be out-of-date momentarily. This is important to consider if you are serving some requests
+using queries to slaves.
+
+At a very high level, a replicated MongoDB setup always consists of at least two servers,
+or nodes. One node is the master and is responsible for handling normal client requests.
+The other node(s) is a slave and is responsible for mirroring the data stored on the
+master. The master keeps a record of all operations that have been performed on it.
+The slave periodically polls the master for any new operations and then performs them
+on its copy of the data. By performing all of the same operations that have been performed on the master node, the slave keeps its copy of the data up-to-date with the
+master’s.
+
+
+OpLog
+The record of operations kept by the master is called the oplog, short for operation log.
+The oplog is stored in a special database called local, in the oplog.$main collection.
+Each document in the oplog represents a single operation performed on the master
+server
+
+ts - timestamp for operation
+op - type of operation , i for an insert
+ns - collection name where opaeration was performed
+o - document for inser for inser ope , so on
+One important note about the oplog is that it stores only operations that change the
+state of the database. A query, for example, would not be stored in the oplog. This
+makes sense because the oplog is int.As new operations are stored in the oplog, they will
+automatically replace the oldest operations. This guarantees that the oplog does not
+  grow beyond a preset bound.
+
+Syncing
+When a slave first starts up, it will do a full sync of the data on the master node. The
+slave will copy every document from the master node, which is obviously an expensive
+operation. After the initial sync is complete, the slave will begin querying the master’s
+oplog and applying operations in order to stay up-to-date.
+
+If the application of operations on the slave gets too far behind the actual operations
+being performed on the master, the slave will fall out of sync. An out-of-sync slave is
+unable to continue to apply operations to catch up to the master, because every operation in the master’s oplog is too “new.” This could happen if the slave has had downtime or is busy handling reads. It can also happen following a full sync, if the sync takes
+long enough that the oplog has rolled over by the time it is finished.
+When a slave gets out of sync, replication will halt, and the slave will need to be fully
+resynced from the master. This resync can be performed manually by running the
+command {"resync" : 1} on the slave’s admin database or automatically by starting
+the slave with the --autoresync option. Either way, doing a resync is a very expensive
+operation, and it’s a situation that is best avoided by choosing a large enough oplog size.
+
+
+
+Replication State and the Local Database
+The local database is used for all internal replication state, on both the master and the
+slave. The local database’s name is local, and its contents will never be replicated.
+Thus, the local database is guaranteed to be local to a single MongoDB server
+
+Other replication state stored on the master includes a list of its slaves. (Slaves perform
+a handshake using the handshake command when they connect to the master.) This list
+is stored in the slaves collection:
+db.slaves.find()
+Slaves also store state in the local database. They store a unique slave identifier in the
+me collection, and a list of sources, or nodes, that they are slaving from, in the sources
+collection:
+
+The master and slave keep track of how up-to-date a slave is, using the timestamp
+stored in "syncedTo". Each time the slave queries the oplog for new operations, it uses
+"syncedTo" to specify which new operations it needs to apply or to find out if it is out
+of sync.
+
+
+Blocking for Replication
+

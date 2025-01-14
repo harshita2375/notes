@@ -1,0 +1,24 @@
+client libraries handle service discovery, failure modes, logging, and
+other aspects that aren’t actually about the nature of the service itself. Without these
+shared clients, it would be hard to ensure that each piece of client/server communications
+behaved well at the massive scale at which Netflix operates.
+
+Versioning
+----------
+Major.minor.patch
+
+major changes --> may have incomptibale changes
+minor- new changee , hsould be backward compatible.
+
+co-exist different version
+--------------------------
+n case of breaking changes, changes that clients are not comptible , we can maintain
+2 different version of a service.
+coexisting different service for short period of time makes sense but not for e
+exytended periods as this would require maintianing two codebases.
+putting changes in both repos etc.
+like blue/green deployment and canary .
+
+-------------------------------------------------------------------
+User
+

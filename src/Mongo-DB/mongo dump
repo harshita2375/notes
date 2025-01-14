@@ -1,0 +1,51 @@
+mongodump works by querying
+against a running MongoDB server and writing all of the documents it contains to disk.
+
+Slave backups
+
+
+
+When running MongoDB
+with replication (see Chapter 9), any of the previously mentioned backup techniques
+can be applied to a slave server rather than the master. The slave will always have a
+copy of the data that is nearly in sync with the master. Because we’re not depending
+on the performance of the slave or its availability for reads or writes, we are free to use
+any of the three options above: shutting down, the dump and restore tools, or the
+fsync command. Backing up from a slave is the recommended way to hand.
+
+Replica set
+A replica set is basically a master-slave cluster with automatic failover. The biggest
+difference between a master-slave cluster and a replica set is that a replica set does not
+have a single master: one is elected by the cluster and may change to another node if
+the current master goes down. However, they look very similar: a replica set always has
+a single master node (called a primary) and one or more slaves (called secondaries).
+
+
+Failover and primary election
+If the current primary fails, the rest of the nodes in the set will attempt to elect a new
+primary node. This election process will be initiated by any node that cannot reach the
+primary. The new primary must be elected by a majority of the nodes in the set. Arbiter
+nodes participate in voting as well and are useful for breaking ties (e.g., when the participating nodes are split into two halves separated by a network partition). The new
+primary will be the node with the highest priority, using freshness of data to break ties
+between nodes with the same priority.
+
+Whenever the primary changes, the data on the new primary is assumed to be the most
+up-to-date data in the system. Any operations that have been applied on any other
+nodes (i.e., the former primary node) will be rolled back, even if the former primary
+comes back online. To accomplish this rollback, all nodes go through a resync process
+when connecting to a new primary. They look through their oplog for operations that
+have not been applied on the primary and query the new primary to get an up-to-date
+copy of any documents affected by such operations. Nodes that are currently in the
+process of resyncing are said to be recovering and will not be eligible for primary election
+until the process is complete.
+
+-------------------------
+The primary purpose and most common use case of a MongoDB slave is to function
+as failover mechanism in the case of data loss or downtime on the master node. There
+are other valid use cases for a MongoDB slave, however. A slave can be used as a source
+for taking backups (see Chapter 8). It can also be used for scaling out reads or for
+performing data processing jobs on.
+--------------------
+
+
+
