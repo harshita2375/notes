@@ -10,3 +10,32 @@ Uses
 6. centalized and reliable data registry.
 -------------------------------------------------------------------------------
 
+
+ZooKeeper, a distributed coordination service, primarily works using Paxos-like consensus algorithms, with its own implementation called Zab (ZooKeeper Atomic Broadcast). Zab is tailored for high-performance, reliable distributed coordination and is simpler than Paxos while fulfilling similar requirements.
+
+Key Components of the Zab Algorithm:
+Leader Election:
+Ensures that one server acts as the leader while others function as followers.
+A leader is responsible for proposing and broadcasting updates.
+Atomic Broadcast:
+Zab ensures that all servers receive updates in the same order, guaranteeing consistency.
+Updates are committed only when a quorum of servers (majority) acknowledges them.
+Crash Recovery:
+ZooKeeper ensures that even after server crashes, it can recover with a consistent state.
+Zab re-establishes a leader and resynchronizes servers to maintain reliability.
+Quorum-Based Decision-Making:
+Decisions are made when a majority of nodes (a quorum) agree.
+This ensures fault tolerance as ZooKeeper can function even if some servers fail.
+Properties of Zab:
+Sequential Consistency: Clients observe changes in the order they were applied.
+Reliability: Once a change is committed, it is durable.
+High Availability: As long as a quorum is available, ZooKeeper can process requests.
+Partition Tolerance: Zab ensures the system does not split into inconsistent states during network partitions.
+How It Works:
+Write Requests:
+Handled by the leader and broadcast to followers.
+A write is considered successful when acknowledged by a quorum.
+Read Requests:
+Can be served by any node, offering scalability.
+If strict consistency is required, the request may be routed to the leader.
+This combination of leader-based coordination and quorum-based consensus makes ZooKeeper robust for distributed systems requiring synchronization and coordination, such as Apache Kafka and Hadoop.
