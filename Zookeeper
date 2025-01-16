@@ -39,3 +39,40 @@ Read Requests:
 Can be served by any node, offering scalability.
 If strict consistency is required, the request may be routed to the leader.
 This combination of leader-based coordination and quorum-based consensus makes ZooKeeper robust for distributed systems requiring synchronization and coordination, such as Apache Kafka and Hadoop.
+-----------------------------------------------------------------------------------------------
+Uses of Znodes
+Znodes are critical for enabling distributed coordination and synchronization. Here are common use cases:
+
+1. Configuration Management:
+
+Znodes can store configuration settings for distributed applications.
+Updates to these znodes are immediately visible to all clients, enabling dynamic configuration changes.
+2. Service Discovery:
+
+Applications register themselves with znodes when they start.
+Clients can look up services by querying znodes.
+3. Leader Election:
+
+Ephemeral sequential znodes are used for leader election.
+Clients create znodes with sequential numbers, and the one with the smallest number is elected as the leader.
+4. Distributed Locks:
+
+Znodes can act as locks in distributed systems.
+Clients create a znode to acquire the lock and delete it to release the lock.
+5. Task Assignment:
+
+Znodes can represent tasks in distributed systems.
+Workers pick up tasks by modifying or deleting znodes, ensuring no task is executed more than once.
+6. State Management:
+
+Znodes can store the state of applications or processes, such as whether a node is healthy or processing a task.
+7. Coordination and Synchronization:
+
+Znodes act as barriers or synchronization points, ensuring all clients reach a specific state before proceeding.
+Example
+Service Discovery:
+
+A distributed application might use ZooKeeper for service discovery as follows:
+Services register themselves under a specific znode, e.g., /services/database.
+Clients query /services/database to find available database instances.
+If a database instance crashes, its ephemeral znode is automatically removed, reflecting the service's unavailability.
