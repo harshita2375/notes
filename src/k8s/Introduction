@@ -1,3 +1,6 @@
+🚀 Kubernetes (K8s) - The Container Orchestration Platform
+Kubernetes is an open-source container orchestration system that helps in automating deployment, scaling, and management of containerized applications. It is widely used to manage Docker containers in production environments.
+
 
 Immutability
 A system upgrade via the apt-get update tool is
