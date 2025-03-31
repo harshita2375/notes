@@ -8,6 +8,8 @@ Uses
 4. Distributes synchronization- lock, barrier and queues
 5. Leader election in distributed system
 6. centalized and reliable data registry.
+example in Whatsapp like system where there are a lot chat server , zookeeper is used as chat registry 
+to keep track for user to server socket  mapping for persistent web connections. 
 -------------------------------------------------------------------------------
 
 
