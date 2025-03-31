@@ -1,2 +1,18 @@
 Problem
 leverage Redis’s pub/sub functionality to create a light realtime chat system with Node.js and Socket.IO.
+
+
+
+
+🔹 Redis Pub/Sub (Publish-Subscribe) Explained
+Redis Pub/Sub is a messaging pattern where publishers send messages to channels, and subscribers listening to those channels receive those messages in real-time.
+
+🔹 How Redis Pub/Sub Works
+1️⃣ A publisher sends messages to a channel (e.g., news).
+2️⃣ Subscribers who are listening to that channel receive the messages instantly.
+3️⃣ If a subscriber is offline, they miss the messages (Redis Pub/Sub does not store messages).
+
+📌 It’s a fire-and-forget system with no message persistence.
+
+
+<iframe width="1269" height="585" src="https://www.youtube.com/embed/cr6p0n0N-VA" title="System Design Interview: Design Whatsapp w/ a Ex-Meta Senior Manager" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
