@@ -1,0 +1,81 @@
+redis sentinel setup , can you explain more about it
+
+
+ChatGPT said:
+Sure! Let's break down Redis Sentinel and how it's used for high availability in a Redis deployment.
+
+🔄 What is Redis Sentinel?
+Redis Sentinel is a supervision system for Redis. It provides:
+
+Monitoring – Check if your master and replicas are working as expected.
+
+Notification – Alert if something goes wrong.
+
+Automatic failover – Promote a replica to master if the master goes down.
+
+Configuration provider – Applications can query Sentinel to get the current master’s IP/port.
+
+🧱 Basic Architecture
+A typical Redis Sentinel setup has:
+
+1 Master
+
+1 or more Replicas
+
+3 or more Sentinel processes (for quorum & failover)
+
+Example:
+pgsql
+Copy
+Edit
+                    +-----------------+
+                    |   Application   |
+                    +--------+--------+
+                             |
+                             |
+                  +----------v----------+
+                  |     Sentinel 1      |
+                  +----------+----------+
+                             |
+        +---------+----------+----------+---------+
+        |         |                     |         |
++-------v----+ +---v---------+   +------v----+ +---v---------+
+|  Sentinel2 | |  Sentinel3  |   |   Redis    | |   Redis     |
+|            | |             |   |  Master    | |  Replica    |
++------------+ +-------------+   +------------+ +-------------+
+⚙️ How Failover Works
+Sentinel detects master is down (using ping checks and quorum).
+
+Sentinels vote to confirm the failure (quorum must agree).
+
+Sentinel promotes a replica to be the new master.
+
+Remaining replicas are reconfigured to replicate from the new master.
+
+Application is informed (or can query) about the new master.
+
+📁 Configuration Basics
+Redis Server config (replica):
+conf
+
+replicaof <master-ip> <master-port>
+Sentinel config (sentinel.conf):
+
+port 26379
+
+# Monitor master <name> <ip> <port> <quorum>
+sentinel monitor mymaster 127.0.0.1 6379 2
+
+# Timeout to detect down (in milliseconds)
+sentinel down-after-milliseconds mymaster 5000
+
+# Failover timeout
+sentinel failover-timeout mymaster 10000
+
+# How many sentinels need to agree to start failover
+sentinel parallel-syncs mymaster 1
+You need to run at least 3 Sentinel instances to ensure a reliable quorum.
+
+🚀 Running Sentinel
+Start Redis Sentinel using:
+
