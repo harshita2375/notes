@@ -1,0 +1,8 @@
+ MongoDB Data Hierarchy (Top to Bottom)
+
+Edit
+MongoDB Server
+└── Database
+    └── Collection
+        └── Document (BSON/JSON)
+            └── Fields (Key-Value pairs)
