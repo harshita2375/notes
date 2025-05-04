@@ -1,0 +1,74 @@
+Yes — Amazon DynamoDB supports cursor-based pagination, although it's not exactly the same as SQL-style created_at < ... queries. Instead, it uses a built-in mechanism called LastEvaluatedKey as the cursor.
+
+✅ How Cursor-Based Pagination Works in DynamoDB
+When you do a Query or Scan, DynamoDB:
+
+Returns a page of items (based on Limit)
+
+If more items are available, includes a field: LastEvaluatedKey
+
+You send LastEvaluatedKey back in the next request as ExclusiveStartKey
+
+🔄 Pagination Flow
+
+QueryRequest request = new QueryRequest()
+    .withTableName("Orders")
+    .withKeyConditionExpression("customerId = :cid")
+    .withExpressionAttributeValues(Map.of(":cid", new AttributeValue().withS("cust123")))
+    .withLimit(10);
+
+QueryResult result = dynamoDB.query(request);
+List<Map<String, AttributeValue>> items = result.getItems();
+
+// Get cursor
+Map<String, AttributeValue> lastKey = result.getLastEvaluatedKey();
+Then to fetch the next page:
+
+java
+Copy
+Edit
+request.setExclusiveStartKey(lastKey);
+QueryResult nextResult = dynamoDB.query(request);
+
+
+-------------------------------------------------------------------------------------------------------------------------
+
+Great — let's look at how to achieve cursor-based pagination in SQL, similar to DynamoDB's ExclusiveStartKey behavior.
+
+✅ Goal
+Instead of using offset-based pagination like this:
+
+
+SELECT * FROM messages ORDER BY created_at DESC LIMIT 10 OFFSET 30;
+...we use keyset/cursor-based pagination:
+
+SELECT * FROM messages 
+WHERE created_at < '2024-05-01T12:00:00' 
+ORDER BY created_at DESC 
+LIMIT 10;
+🧠 What's the Cursor in SQL?
+The cursor is the value of the sort key column (e.g., created_at, id) from the last item in the previous page. You send this back in the next request to resume from there.
+
+🛠 Step-by-Step
+1. First Page (no cursor)
+sql
+Copy
+Edit
+SELECT * FROM messages 
+ORDER BY created_at DESC 
+LIMIT 10;
+2. Get Cursor
+From the 10th row: created_at = '2024-05-01T12:00:00'
+
+Encode it in frontend URL (optional):
+
+?cursor=2024-05-01T12%3A00%3A00
+3. Next Page (with cursor)
+sql
+Copy
+Edit
+SELECT * FROM messages 
+WHERE created_at < '2024-05-01T12:00:00' 
+ORDER BY created_at DESC 
+LIMIT 10;
+💡 If you're sorting ASC, use > instead of <
